@@ -4,7 +4,6 @@ The ZST format is a flat binary dump with an optional zlib compression layer.
 Header: ``ZSNES Save State File V143\\x1a\\x8f`` (28 bytes).
 """
 
-import struct
 import zlib
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -89,7 +88,7 @@ class ZsnesState:
     sa1_extra: bytes = b""
 
 
-def parse_zst(path: Path) -> ZsnesState:
+def parse_zsnes(path: Path) -> ZsnesState:
     raw = path.read_bytes()
     state = ZsnesState()
 

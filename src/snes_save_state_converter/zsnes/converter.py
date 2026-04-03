@@ -4,8 +4,6 @@ PPU register offsets reference the 3019-byte ``sndrot`` block defined in
 ``cpu/regs.inc``.  All multi-byte values in the ZST are little-endian.
 """
 
-import struct
-
 from snes_save_state_converter.mesen2.serializer import MesenSerializer
 from snes_save_state_converter.zsnes.parser import ZsnesState
 
@@ -26,7 +24,7 @@ def _ppu32(ppu: bytes, off: int) -> int:
     return int.from_bytes(ppu[off : off + 4], "little") if off + 3 < len(ppu) else 0
 
 
-def convert_zst(zst: ZsnesState) -> bytes:
+def convert(zst: ZsnesState) -> bytes:
     ser = MesenSerializer()
     ppu = zst.ppu_raw
 

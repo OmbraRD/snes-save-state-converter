@@ -2,6 +2,13 @@
 
 Convert SNES emulator save states to [Mesen2](https://github.com/SourMesen/Mesen2) format.
 
+> **DISCLAIMER**
+This project is functional but needs broad testing across different games and save state versions. If you encounter issues, please [open a bug report](https://github.com/OmbraRD/snes-save-state-converter/issues) including:
+> - Game name, region and CRC32 of the ROM
+> - Source emulator and version (e.g. Snes9x 1.62, ZSNES 1.51)
+> - The save state file attached
+> - Description of the problem (crash, graphical glitch, audio issue, etc.)
+
 ## Supported input formats
 
 | Emulator | Extensions | Notes |
