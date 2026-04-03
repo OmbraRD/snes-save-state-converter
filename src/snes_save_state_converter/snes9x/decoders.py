@@ -25,6 +25,8 @@ def decode_cpu_block(data: bytes, version: int) -> dict:
     cpu["PrevCycles"] = _be_s(data, o, 4); o += 4
     cpu["V_Counter"] = _be_s(data, o, 4); o += 4
     cpu["Flags"] = _be(data, o, 4); o += 4
+    if version < 7:
+        cpu["CPU_IRQActive"] = data[o]; o += 1  # OBSOLETE v6, deleted v7
     cpu["IRQPending"] = _be_s(data, o, 4); o += 4
     cpu["MemSpeed"] = _be_s(data, o, 4); o += 4
     cpu["MemSpeedx2"] = _be_s(data, o, 4); o += 4
@@ -37,6 +39,9 @@ def decode_cpu_block(data: bytes, version: int) -> dict:
     cpu["WhichEvent"] = data[o]; o += 1
     cpu["NextEvent"] = _be_s(data, o, 4); o += 4
     cpu["WaitingForInterrupt"] = data[o]; o += 1
+    if version < 7:
+        # DELETED entries: WaitAddress(4), WaitCounter(4), PBPCAtOpcodeStart(4)
+        o += 4 + 4 + 4
     if version >= 7:
         cpu["NMIPending"] = data[o]; o += 1
         cpu["IRQLine"] = data[o]; o += 1

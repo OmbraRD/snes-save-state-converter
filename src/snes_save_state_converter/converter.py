@@ -362,15 +362,15 @@ def convert(s9x: Snes9xState) -> bytes:
     ser.write_u16("ppu.verticalLocation", 0)
     ser.write_bool("ppu.verticalLocationToggle", False)
     ser.write_bool("ppu.locationLatched", False)
-    ser.write_bool("ppu.oddFrame", False)
+    ser.write_u8("ppu.oddFrame", 0)
     ser.write_u16("ppu.vblankStartScanline", vbl_start)
     ser.write_u16("ppu.nmiScanline", vbl_start + 1)
     ser.write_u16("ppu.vblankEndScanline", vbl_end)
     ser.write_u16("ppu.adjustedVblankEndScanline", vbl_end)
     ser.write_u16("ppu.baseVblankEndScanline", vbl_end)
     ser.write_bool("ppu.overclockEnabled", False)
-    ser.write_i16("ppu.drawStartX", 0)
-    ser.write_i16("ppu.drawEndX", 0)
+    ser.write_u16("ppu.drawStartX", 0)
+    ser.write_u16("ppu.drawEndX", 0)
     ser.write_u16("ppu.mosaicScanlineCounter", 0)
 
     # Layer tile cache — keys match SVI(_layerData[N].Tiles[i].Field) normalized
@@ -396,7 +396,7 @@ def convert(s9x: Snes9xState) -> bytes:
     ser.write_bool("dmaController.dmaPending", False)
     ser.write_u32("dmaController.dmaClockCounter", 0)
     ser.write_bool("dmaController.hdmaInitPending", False)
-    ser.write_u8("dmaController.dmaStartDelay", 0)
+    ser.write_bool("dmaController.dmaStartDelay", False)
     ser.write_bool("dmaController.needToProcess", False)
 
     for i in range(8):
@@ -436,7 +436,7 @@ def convert(s9x: Snes9xState) -> bytes:
     for i in range(4):
         ser.write_u16(f"internalRegisters.controllerData[{i}]", _fr16(fr, 0x4218 + i * 2))
     ser.write_bool("internalRegisters.irqLevel", False)
-    ser.write_bool("internalRegisters.needIrq", False)
+    ser.write_u8("internalRegisters.needIrq", 0)
     ser.write_bool("internalRegisters.enableAutoJoypadRead", bool(r4200 & 0x01))
     ser.write_bool("internalRegisters.irqFlag", False)
 
@@ -557,16 +557,17 @@ def convert(s9x: Snes9xState) -> bytes:
     ser.write_u16("spc.dsp.sampleAddress", snd["dsp_t_dir_addr"])
     ser.write_u16("spc.dsp.brrNextAddress", snd["dsp_t_brr_next_addr"])
     ser.write_u8("spc.dsp.dirSampleTableAddress", snd["dsp_t_dir"])
-    ser.write_bool("spc.dsp.noiseOn", bool(snd["dsp_t_non"]))
-    ser.write_bool("spc.dsp.pitchModulationOn", bool(snd["dsp_t_pmon"]))
+    # These are voice bitmasks (uint8), NOT booleans
+    ser.write_u8("spc.dsp.noiseOn", snd["dsp_t_non"])
+    ser.write_u8("spc.dsp.pitchModulationOn", snd["dsp_t_pmon"])
     ser.write_u8("spc.dsp.keyOn", snd["dsp_kon"])
     ser.write_u8("spc.dsp.newKeyOn", snd["dsp_new_kon"])
     ser.write_u8("spc.dsp.keyOff", snd["dsp_t_koff"])
-    ser.write_bool("spc.dsp.everyOtherSample", bool(snd["dsp_every_other_sample"]))
+    ser.write_u8("spc.dsp.everyOtherSample", snd["dsp_every_other_sample"])
     ser.write_u8("spc.dsp.sourceNumber", snd["dsp_t_srcn"])
     ser.write_u8("spc.dsp.brrHeader", snd["dsp_t_brr_header"])
     ser.write_u8("spc.dsp.brrData", snd["dsp_t_brr_byte"])
-    ser.write_bool("spc.dsp.looped", bool(snd["dsp_t_looped"]))
+    ser.write_u8("spc.dsp.looped", snd["dsp_t_looped"])  # voice bit flag, not bool
     ser.write_u8("spc.dsp.adsr1", snd["dsp_t_adsr0"])
     ser.write_array_i32("spc.dsp.echoIn", [snd["dsp_t_echo_in_l"], snd["dsp_t_echo_in_r"]])
     ser.write_array_i32("spc.dsp.echoOut", [snd["dsp_t_echo_out_l"], snd["dsp_t_echo_out_r"]])
@@ -576,7 +577,7 @@ def convert(s9x: Snes9xState) -> bytes:
     ser.write_u16("spc.dsp.echoOffset", snd["dsp_echo_offset"])
     ser.write_u8("spc.dsp.echoHistoryPos", 0)
     ser.write_u8("spc.dsp.echoRingBufferAddress", snd["dsp_t_esa"])
-    ser.write_bool("spc.dsp.echoOn", bool(snd["dsp_t_eon"]))
+    ser.write_u8("spc.dsp.echoOn", snd["dsp_t_eon"])  # voice bitmask
     ser.write_bool("spc.dsp.echoEnabled", bool(snd["dsp_t_echo_enabled"]))
 
     # SPC internal
