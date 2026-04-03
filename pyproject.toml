@@ -1,0 +1,19 @@
+[project]
+name = "snes-save-state-converter"
+version = "0.1.0"
+description = "Convert SNES9x save states to Mesen2 format"
+readme = "README.md"
+authors = [
+    { name = "OmbraRD", email = "ombra_rd@hotmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "click>=8.1",
+]
+
+[project.scripts]
+snes-save-state-converter = "snes_save_state_converter.cli:cli"
+
+[build-system]
+requires = ["uv_build>=0.10.12,<0.11.0"]
+build-backend = "uv_build"
