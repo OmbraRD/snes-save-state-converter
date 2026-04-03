@@ -7,6 +7,7 @@ from pathlib import Path
 
 import click
 
+from snes_save_state_converter.mesen2.converter import convert as convert_to_mesen2
 from snes_save_state_converter.mesen2.writer import write_mesen_savestate
 from snes_save_state_converter.snes9x.converter import convert as convert_snes9x
 from snes_save_state_converter.snes9x.parser import parse_snes9x
@@ -20,7 +21,7 @@ class Format(Enum):
 
 
 def _detect_format(path: Path) -> Format | None:
-    """Detect save state format from file header/extension."""
+    """Detect save state format from file header."""
     raw = path.read_bytes()
 
     # Check for snes9x magic (possibly gzip-compressed)
@@ -69,19 +70,20 @@ def cli(input_file: Path, output: Path | None, rom_name: str | None) -> None:
         click.echo(f"  Version: {s9x.version}")
         click.echo(f"  Blocks: {', '.join(s9x.blocks.keys())}")
 
-        click.echo("Converting to Mesen2 format...")
-        serialized = convert_snes9x(s9x)
+        click.echo("Converting...")
+        state = convert_snes9x(s9x)
     elif fmt == Format.ZSNES:
         click.echo(f"Reading ZSNES state: {input_file}")
         zst = parse_zsnes(input_file)
         click.echo(f"  Version: {zst.version}")
         click.echo(f"  SPC: {'yes' if zst.spcon else 'no'}")
 
-        click.echo("Converting to Mesen2 format...")
-        serialized = convert_zsnes(zst)
+        click.echo("Converting...")
+        state = convert_zsnes(zst)
     else:
         raise click.ClickException(f"Unsupported save state format: {input_file.name}")
 
+    serialized = convert_to_mesen2(state)
     click.echo(f"  Serialized state size: {len(serialized)} bytes")
     write_mesen_savestate(output, serialized, rom_name)
     click.echo(f"Written: {output}")
